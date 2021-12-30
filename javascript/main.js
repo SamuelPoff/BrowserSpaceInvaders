@@ -3,17 +3,21 @@ import {Action} from "./modules/input/action.js"
 import {TextureAtlas} from "./modules/textures/TextureAtlas.js"
 import {Ship} from "./gameobjects/ship.js"
 import Collisions from "../node_modules/collisions/src/Collisions.mjs"
+import * as SceneData from "./sceneData.js"
 
 let app = new PIXI.Application({width: 800, height: 600});
 document.body.appendChild(app.view);
 
 let loader = new PIXI.Loader();
 
+SceneData.SetPixiApplication(app);
+
 const CollisionSystem = new Collisions();
 const CollisionResult = CollisionSystem.createResult();
 
-let test1 = CollisionSystem.createCircle(0, 0, 20);
-let test2 = CollisionSystem.createCircle(10, 0, 20);
+SceneData.SetCollisionSystem(CollisionSystem);
+
+let test1 = CollisionSystem.createCircle(0, 0, 40);
 
 let testAtlas
 let elapsed = 0.0;
@@ -23,6 +27,9 @@ let mediumAlienSprite;
 let largeAlienSprite;
 
 let ship;
+
+let GameObjects = [];
+SceneData.SetGameObjectPool(GameObjects);
 
 //Central point to kick the program off from
 function Main(){
@@ -53,6 +60,9 @@ function Initialize(){
     let leftAction = new Action("left", ["KeyA", "ArrowLeft"]);
     Input.RegisterAction(leftAction);
 
+    let shootAction = new Action("shoot", ["Space"]);
+    Input.RegisterAction(shootAction);
+
     let value = loader.load((loader, resources) => {
 
         testAtlas = new TextureAtlas(atlasBaseTexture, resources.atlas.data);
@@ -68,38 +78,34 @@ function Initialize(){
         app.stage.addChild(mediumAlienSprite);
         app.stage.addChild(largeAlienSprite);
 
-        ship = new Ship(largeAlienSprite);
+        ship = new Ship(largeAlienSprite, CollisionSystem, testAtlas.Textures["SmallAlien0"]);
+        GameObjects.push(ship);
 
     });
 
 }
 
 
-function Update(delta){
+function Update(deltaTime){
 
-    elapsed += delta;
+    elapsed += deltaTime;
 
-    if(ship != null){
-        ship.Update(delta);
-    }
+    UpdateGameObjects(deltaTime);
 
     CollisionSystem.update();
-    CollisionSystem.draw();
-
-    //Handle some test collisions
-    let potentials = test1.potentials();
-    for(const other of potentials){
-        if(test1.collides(other)){
-            CollisionCallback();
-        }
-    }
-
-
 
 }
 
-function CollisionCallback(){
-    console.log("A collision has been detected");
+function UpdateGameObjects(deltaTime){
+
+    GameObjects.forEach((object) => {
+
+        if(object != null){
+            object.Update(deltaTime);
+        }
+
+    });
+
 }
 
 window.addEventListener("keydown", OnKeydown);
