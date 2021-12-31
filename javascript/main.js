@@ -2,22 +2,26 @@ import * as Input from "./modules/input/input.js"
 import {Action} from "./modules/input/action.js"
 import {TextureAtlas} from "./modules/textures/TextureAtlas.js"
 import {Ship} from "./gameobjects/ship.js"
+import { Alien } from "./gameobjects/alien.js"
 import Collisions from "../node_modules/collisions/src/Collisions.mjs"
 import * as SceneData from "./sceneData.js"
+import { Vector2 } from "./modules/helpers/Vector2.js"
 
+//Setup Pixi
 let app = new PIXI.Application({width: 800, height: 600});
 document.body.appendChild(app.view);
-
 let loader = new PIXI.Loader();
-
 SceneData.SetPixiApplication(app);
 
+//Setup Collisions
 const CollisionSystem = new Collisions();
 const CollisionResult = CollisionSystem.createResult();
-
 SceneData.SetCollisionSystem(CollisionSystem);
-
 let test1 = CollisionSystem.createCircle(0, 0, 40);
+
+//Setup the game object container
+let GameObjects = new Map();
+SceneData.SetGameObjectPool(GameObjects);
 
 let testAtlas
 let elapsed = 0.0;
@@ -28,8 +32,6 @@ let largeAlienSprite;
 
 let ship;
 
-let GameObjects = [];
-SceneData.SetGameObjectPool(GameObjects);
 
 //Central point to kick the program off from
 function Main(){
@@ -66,6 +68,7 @@ function Initialize(){
     let value = loader.load((loader, resources) => {
 
         testAtlas = new TextureAtlas(atlasBaseTexture, resources.atlas.data);
+        SceneData.SetTextureAtlas(testAtlas);
 
         smallAlienSprite = new PIXI.Sprite(testAtlas.Textures["SmallAlien0"]);
         smallAlienSprite.x = 100;
@@ -79,7 +82,12 @@ function Initialize(){
         app.stage.addChild(largeAlienSprite);
 
         ship = new Ship(largeAlienSprite, CollisionSystem, testAtlas.Textures["SmallAlien0"]);
-        GameObjects.push(ship);
+        GameObjects.set(ship.GetId(), ship);
+
+        let alien0 = new Alien();
+        alien0.Position = new Vector2(100, 100);
+
+        SceneData.AddGameObject(alien0);
 
     });
 
@@ -90,21 +98,20 @@ function Update(deltaTime){
 
     elapsed += deltaTime;
 
+    
     UpdateGameObjects(deltaTime);
 
     CollisionSystem.update();
+
+    SceneData.DeleteGameObjectQueue();
 
 }
 
 function UpdateGameObjects(deltaTime){
 
-    GameObjects.forEach((object) => {
-
-        if(object != null){
-            object.Update(deltaTime);
-        }
-
-    });
+    for(const gameobject of GameObjects.values()){
+        gameobject.Update(deltaTime);
+    }
 
 }
 

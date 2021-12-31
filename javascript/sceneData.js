@@ -1,6 +1,10 @@
 let PixiApplication;
 let CollisionSystem;
+
 let GameObjectPool;
+let DeletedObjectQueue = [];
+
+let TextureAtlas;
 
 function SetPixiApplication(app){
     PixiApplication = app;
@@ -23,7 +27,32 @@ function SetGameObjectPool(pool){
 }
 
 function AddGameObject(object){
-    GameObjectPool.push(object);
+    GameObjectPool.set(object.GetId(), object);
 }
 
-export {SetPixiApplication, GetPixiApplication, SetCollisionSystem, GetCollisionSystem, SetGameObjectPool, AddGameObject}
+function DestroyGameObject(object){
+    DeletedObjectQueue.push(object);
+}
+
+function DeleteGameObjectQueue(){
+
+    for(const obj of DeletedObjectQueue){
+
+        obj.OnDestroy();
+        GameObjectPool.delete(obj.GetId());
+
+    }
+
+    DeletedObjectQueue.length = 0;
+
+}
+
+function SetTextureAtlas(atlas){
+    TextureAtlas = atlas;
+}
+
+function GetTextureAtlas(){
+    return TextureAtlas;
+}
+
+export {SetPixiApplication, GetPixiApplication, SetCollisionSystem, GetCollisionSystem, SetGameObjectPool, AddGameObject, DestroyGameObject, SetTextureAtlas, GetTextureAtlas, DeleteGameObjectQueue}

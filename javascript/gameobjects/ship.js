@@ -19,7 +19,7 @@ class Ship extends GameObject{
 
         this.sprite = ship_sprite;
         this.collider = new Collider( collision_system.createCircle(0, 0, 10) );
-        this.collider.RegisterCollisionCallback(this.OnColliderCollides);
+        this.collider.RegisterCollisionCallback(this.OnColliderCollides, this);
 
         this.bullet_tex = bullet_texture;
         
@@ -46,7 +46,7 @@ class Ship extends GameObject{
 
             //Add bullet to game object pool
             SceneData.AddGameObject(new_bullet);
-            console.log("Bullet Added");
+
         }
         
 
@@ -61,7 +61,6 @@ class Ship extends GameObject{
     }
 
     OnColliderCollides(other){
-        console.log("Ship has detected a collision");
     }
 
 }
