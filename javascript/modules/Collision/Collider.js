@@ -26,7 +26,7 @@ class Collider{
         let potentials = this.shape.potentials();
         for(const other of potentials){
             if(this.shape.collides(other)){
-                this.CollisionCallback.function.call(this.CollisionCallback.context);
+                this.CollisionCallback.function.call(this.CollisionCallback.context, other);
             }
         }
 

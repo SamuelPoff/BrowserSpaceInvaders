@@ -38,7 +38,9 @@ function DeleteGameObjectQueue(){
 
     for(const obj of DeletedObjectQueue){
 
-        obj.OnDestroy();
+        if(obj.OnDestroy != null){
+            obj.OnDestroy();
+        }
         GameObjectPool.delete(obj.GetId());
 
     }
@@ -53,6 +55,14 @@ function SetTextureAtlas(atlas){
 
 function GetTextureAtlas(){
     return TextureAtlas;
+}
+
+export function GetViewWidth(){
+    return PixiApplication.renderer.width / PixiApplication.stage.scale.x;
+}
+
+export function GetViewHeight(){
+    return PixiApplication.renderer.height / PixiApplication.stage.scale.y;
 }
 
 export {SetPixiApplication, GetPixiApplication, SetCollisionSystem, GetCollisionSystem, SetGameObjectPool, AddGameObject, DestroyGameObject, SetTextureAtlas, GetTextureAtlas, DeleteGameObjectQueue}

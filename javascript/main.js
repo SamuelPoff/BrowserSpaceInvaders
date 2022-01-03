@@ -11,7 +11,12 @@ import { Vector2 } from "./modules/helpers/Vector2.js"
 let app = new PIXI.Application({width: 800, height: 600});
 document.body.appendChild(app.view);
 let loader = new PIXI.Loader();
+app.stage.position.set(0, 0);
+app.stage.scale.set(1);
 SceneData.SetPixiApplication(app);
+
+let ViewWidth = SceneData.GetViewWidth();
+let ViewHeight = SceneData.GetViewHeight();
 
 //Setup Collisions
 const CollisionSystem = new Collisions();
@@ -32,6 +37,7 @@ let largeAlienSprite;
 
 let ship;
 
+let AlienGroupPosition = new Vector2(0, 0);
 
 //Central point to kick the program off from
 function Main(){
@@ -47,9 +53,6 @@ function testCB(){
 }
 
 function Initialize(){
-
-    app.stage.position.set(0, 0);
-    app.stage.scale.set(2);
 
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
@@ -70,24 +73,10 @@ function Initialize(){
         testAtlas = new TextureAtlas(atlasBaseTexture, resources.atlas.data);
         SceneData.SetTextureAtlas(testAtlas);
 
-        smallAlienSprite = new PIXI.Sprite(testAtlas.Textures["SmallAlien0"]);
-        smallAlienSprite.x = 100;
-        smallAlienSprite.scale = new PIXI.ObservablePoint (testCB, this, 10, 10);
-        mediumAlienSprite = new PIXI.Sprite(testAtlas.Textures["MediumAlien0"]);
-        mediumAlienSprite.x = 150;
-        largeAlienSprite = new PIXI.Sprite(testAtlas.Textures["LargeAlien0"]);
-        largeAlienSprite.x = 200;
-        app.stage.addChild(smallAlienSprite);
-        app.stage.addChild(mediumAlienSprite);
-        app.stage.addChild(largeAlienSprite);
-
-        ship = new Ship(largeAlienSprite, CollisionSystem, testAtlas.Textures["SmallAlien0"]);
-        GameObjects.set(ship.GetId(), ship);
-
-        let alien0 = new Alien();
-        alien0.Position = new Vector2(100, 100);
-
-        SceneData.AddGameObject(alien0);
+        ship = new Ship();
+        ship.Position = new Vector2(ViewWidth / 2, ViewHeight - 16);
+        SceneData.AddGameObject(ship);
+        AddAliens();
 
     });
 
@@ -133,6 +122,49 @@ function OnKeyup(event){
         inputs[event.code] = false;
     }
 
+}
+
+function AddAliens(){
+
+    let spacing = 48;
+
+    SpawnAlienRow(10, spacing, 16, true);
+    SpawnAlienRow(12, spacing, 48, false);
+    SpawnAlienRow(10, spacing, 80, true);
+    SpawnAlienRow(12, spacing, 112, false);
+    SpawnAlienRow(10, spacing, 144, true);
+
+}
+
+function SpawnAlienRow(alien_count, x_spacing, y_position, marching_right){
+    
+    let totalAlienWidth = x_spacing * alien_count;
+    let sideMargin = (ViewWidth - totalAlienWidth) / 2;
+
+    for(let i = 0; i < alien_count; i++){
+
+        let x = sideMargin + (i * x_spacing);
+
+        let alien = new Alien();
+        alien.Position = new Vector2(x, y_position);
+
+        if(!marching_right){
+            alien.moving_right = false;
+            alien.march_direction = 1;
+        }
+
+        SceneData.AddGameObject(alien);
+
+    }
+
+}
+
+//Yes this is how I tested if the collisions worked instead of drawing them, its sad
+function SpawnTargetDummy(position){
+    let alien = new Alien();
+    alien.Position = position;
+    alien.march_direction = 3;
+    SceneData.AddGameObject(alien);
 }
 
 Main();

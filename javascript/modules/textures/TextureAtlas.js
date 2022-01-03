@@ -41,9 +41,12 @@ class TextureAtlas {
             console.log("New subtetexture created by name: " + textureName);
 
             let subtex_width = (subtex_data.Right - subtex_data.Left) + 1;
-            let subtex_height = subtex_data.Bottom - subtex_data.Top;
+            let subtex_height = (subtex_data.Bottom - subtex_data.Top) + 1;
             let subtex_frame = new PIXI.Rectangle(subtex_data.Left, subtex_data.Top, subtex_width, subtex_height);
-            this.Textures[textureName] = new PIXI.Texture(this.BaseTexture, subtex_frame);
+
+            let tex = new PIXI.Texture(this.BaseTexture, subtex_frame);
+            tex.defaultAnchor = new PIXI.Point(0.5, 0.5);
+            this.Textures[textureName] = tex;
 
         }
 
