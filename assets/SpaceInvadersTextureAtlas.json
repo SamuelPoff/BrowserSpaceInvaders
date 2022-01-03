@@ -46,6 +46,86 @@
             "Bottom" : 26,
             "Right" : 24
         }
+    },
+
+    "ExplosionEffect" : {
+        "Frames" : 1,
+        "0" : {
+            "Top" : 59,
+            "Left" : 0,
+            "Bottom" : 66,
+            "Right" : 12
+        }
+    },
+
+    "AlienBullet" : {
+
+        "Frames" : 4,
+        "0" : {
+            "Top" : 28,
+            "Left" : 0,
+            "Bottom" : 34,
+            "Right" : 2
+        },
+        "1" : {
+            "Top" : 28,
+            "Left" : 4,
+            "Bottom" : 34,
+            "Right" : 6
+        },
+        "2" : {
+            "Top" : 28,
+            "Left" : 8,
+            "Bottom" : 34,
+            "Right" : 10
+        },
+        "3" : {
+            "Top" : 28,
+            "Left" : 12,
+            "Bottom" : 34,
+            "Right" : 14
+        }
+
+    },
+
+    "Player" : {
+        "Frames" : 1,
+        "0" : {
+            "Top" : 68,
+            "Left" : 0,
+            "Bottom" : 75,
+            "Right" : 13
+        }
+    },
+
+    "PlayerBullet" : {
+
+        "Frames" : 4,
+        "0" : {
+            "Top" : 43,
+            "Left" : 0,
+            "Bottom" : 49,
+            "Right" : 2
+        },
+        "1" : {
+            "Top" : 43,
+            "Left" : 3,
+            "Bottom" : 49,
+            "Right" : 5
+        },
+        "2" : {
+            "Top" : 43,
+            "Left" : 6,
+            "Bottom" : 49,
+            "Right" : 8
+        },
+        "3" : {
+            "Top" : 43,
+            "Left" : 9,
+            "Bottom" : 49,
+            "Right" : 11
+        }
+
     }
 
 }
